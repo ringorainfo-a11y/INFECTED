@@ -87,23 +87,6 @@ window.addEventListener("resize",()=>{
     renderer.setSize(window.innerWidth,window.innerHeight);
 
 });
-
-    // Test-Würfel
-    const cube = new THREE.Mesh(
-        new THREE.BoxGeometry(),
-        new THREE.MeshStandardMaterial({
-            color:0xaa2222
-        })
-    );
-
-    cube.position.y = 0.5;
-
-    scene.add(cube);
-
-    animate();
-
-}
-
 function animate(){
 
     requestAnimationFrame(animate);
