@@ -34,6 +34,7 @@ function startGame(){
     renderer.setSize(window.innerWidth,window.innerHeight);
 
     document.body.appendChild(renderer.domElement);
+    createWorld(scene);
 
     // Licht
     const light = new THREE.HemisphereLight(0xffffff,0x222222,2);
