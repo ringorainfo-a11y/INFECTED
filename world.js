@@ -1,114 +1,168 @@
-// ========================================
+// ===========================================
 // INFECTED
-// World Generation v0.2
-// ========================================
+// world.js
+// Version 0.2 - Part 1
+// ===========================================
 
-function createWorld(scene){
+const WORLD = {
+    SIZE: 3000,
+    HALF: 1500,
+    TREES: [],
+    OBJECTS: [],
+    RANDOM: Math.random
+};
 
-    // -------------------
-    // Atmosphäre
-    // -------------------
+function rand(min, max) {
+    return min + Math.random() * (max - min);
+}
 
-    scene.background = new THREE.Color(0x07090c);
-    scene.fog = new THREE.Fog(0x0a0d10,40,260);
+function createWorld(scene) {
 
-    // -------------------
-    // Licht
-    // -------------------
+    scene.background = new THREE.Color(0x06080a);
 
-    const ambient = new THREE.AmbientLight(0x8ea3b8,0.35);
-    scene.add(ambient);
-
-    const moon = new THREE.DirectionalLight(0xc9dcff,1.3);
-
-    moon.position.set(120,180,80);
-
-    moon.castShadow=true;
-
-    moon.shadow.mapSize.width=2048;
-    moon.shadow.mapSize.height=2048;
-
-    scene.add(moon);
-
-    // -------------------
-    // Boden
-    // -------------------
-
-    const ground = new THREE.Mesh(
-
-        new THREE.PlaneGeometry(1200,1200,100,100),
-
-        new THREE.MeshStandardMaterial({
-
-            color:0x29452b,
-            roughness:1
-
-        })
-
+    scene.fog = new THREE.FogExp2(
+        0x090b0d,
+        0.0035
     );
 
-    ground.rotation.x=-Math.PI/2;
-    ground.receiveShadow=true;
+    createLights(scene);
 
-    scene.add(ground);
-
-    createTrees(scene);
+    createTerrain(scene);
 
 }
 
-function createTrees(scene){
+function createLights(scene){
 
-    const trunkMaterial = new THREE.MeshStandardMaterial({
-        color:0x5a3d23
-    });
+    const ambient = new THREE.AmbientLight(
+        0x8ea0b6,
+        0.28
+    );
 
-    const leafMaterial = new THREE.MeshStandardMaterial({
-        color:0x1f4720
-    });
+    scene.add(ambient);
 
-    for(let i=0;i<300;i++){
+    const moon = new THREE.DirectionalLight(
+        0xc9dcff,
+        1.8
+    );
 
-        const tree = new THREE.Group();
+    moon.position.set(
+        200,
+        350,
+        120
+    );
 
-        const trunk = new THREE.Mesh(
+    moon.castShadow = true;
 
-            new THREE.CylinderGeometry(0.35,0.45,5,8),
+    moon.shadow.mapSize.width = 2048;
+    moon.shadow.mapSize.height = 2048;
 
-            trunkMaterial
+    moon.shadow.camera.left = -500;
+    moon.shadow.camera.right = 500;
+    moon.shadow.camera.top = 500;
+    moon.shadow.camera.bottom = -500;
 
-        );
+    scene.add(moon);
 
-        trunk.position.y=2.5;
+}
 
-        tree.add(trunk);
+function createTerrain(scene){
 
-        const leaves = new THREE.Mesh(
+    const geometry = new THREE.PlaneGeometry(
 
-            new THREE.ConeGeometry(
-                2.3+Math.random(),
-                7+Math.random()*2,
-                10
-            ),
+        WORLD.SIZE,
+        WORLD.SIZE,
+        200,
+        200
 
-            leafMaterial
+    );
 
-        );
+    const vertices = geometry.attributes.position;
 
-        leaves.position.y=7;
+    for(let i=0;i<vertices.count;i++){
 
-        tree.add(leaves);
+        const x = vertices.getX(i);
+        const y = vertices.getY(i);
 
-        tree.position.x=(Math.random()-0.5)*1000;
-        tree.position.z=(Math.random()-0.5)*1000;
+        const height =
 
-        tree.rotation.y=Math.random()*Math.PI*2;
+            Math.sin(x*0.01)*3+
+            Math.cos(y*0.01)*3+
+            Math.sin((x+y)*0.005)*6+
+            Math.random()*0.3;
 
-        const s=0.7+Math.random()*0.8;
-
-        tree.scale.set(s,s,s);
-
-        scene.add(tree);
+        vertices.setZ(i,height);
 
     }
+
+    geometry.computeVertexNormals();
+
+    const material = new THREE.MeshStandardMaterial({
+
+        color:0x29452a,
+
+        roughness:1,
+
+        metalness:0
+
+    });
+
+    const ground = new THREE.Mesh(
+
+        geometry,
+
+        material
+
+    );
+
+    ground.rotation.x = -Math.PI/2;
+
+    ground.receiveShadow = true;
+
+    scene.add(ground);
+
+}
+
+function randomPosition(){
+
+    return {
+
+        x:rand(
+            -WORLD.HALF,
+            WORLD.HALF
+        ),
+
+        z:rand(
+            -WORLD.HALF,
+            WORLD.HALF
+        )
+
+    };
+
+}
+
+function distance(a,b){
+
+    const dx=a.x-b.x;
+    const dz=a.z-b.z;
+
+    return Math.sqrt(dx*dx+dz*dz);
+
+}
+
+function positionFree(pos,minDistance){
+
+    for(const object of WORLD.OBJECTS){
+
+        if(distance(pos,object)<minDistance){
+
+            return false;
+
+        }
+
+    }
+
+    WORLD.OBJECTS.push(pos);
+
+    return true;
 
 }
