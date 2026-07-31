@@ -8,7 +8,14 @@
     <link rel="stylesheet" href="style.css">
 
     <!-- Three.js -->
-    <script src="https://unpkg.com/three@0.165.0/build/three.min.js"></script>
+   <script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.165.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.165.0/examples/jsm/"
+  }
+}
+</script>
 </head>
 
 <body>
@@ -22,13 +29,6 @@
     </button>
 </div>
 
-<script src="js/player.js"></script>
-<script src="js/world.js"></script>
-<script src="js/inventory.js"></script>
-<script src="js/dog.js"></script>
-<script src="js/ai.js"></script>
-<script src="js/sounds.js"></script>
-<script src="js/game.js"></script>
-
+<script type="module" src="js/game.js"></script>
 </body>
 </html>
