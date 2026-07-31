@@ -60,7 +60,58 @@ export class Player {
                 document.pointerLockElement===document.body;
 
         });
+        document.addEventListener("mousemove",(e)=>{
+    this.onMouseMove(e);
+});
 
     }
 
 }
+onMouseMove(event){
+
+        if(!this.pointerLocked) return;
+
+        const sensitivity = 0.002;
+
+        this.yaw -= event.movementX * sensitivity;
+        this.pitch -= event.movementY * sensitivity;
+
+        const limit = Math.PI / 2 - 0.05;
+
+        this.pitch = Math.max(-limit, Math.min(limit, this.pitch));
+
+        this.player.rotation.y = this.yaw;
+        this.camera.rotation.x = this.pitch;
+
+    }
+
+    update(delta){
+
+        const speed = this.keys["ShiftLeft"]
+            ? this.runSpeed
+            : this.walkSpeed;
+
+        const direction = new THREE.Vector3();
+
+        if(this.keys["KeyW"]) direction.z -= 1;
+        if(this.keys["KeyS"]) direction.z += 1;
+        if(this.keys["KeyA"]) direction.x -= 1;
+        if(this.keys["KeyD"]) direction.x += 1;
+
+        if(direction.length()>0){
+
+            direction.normalize();
+
+            direction.applyAxisAngle(
+                new THREE.Vector3(0,1,0),
+                this.yaw
+            );
+
+            this.player.position.addScaledVector(
+                direction,
+                speed * delta
+            );
+
+        }
+
+    }
