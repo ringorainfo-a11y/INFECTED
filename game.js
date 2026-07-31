@@ -1,4 +1,4 @@
- // =========================
+// =========================
 // INFECTED - Game Engine v0.1
 // =========================
 
@@ -34,7 +34,6 @@ function startGame(){
     renderer.setSize(window.innerWidth,window.innerHeight);
 
     document.body.appendChild(renderer.domElement);
-    createWorld(scene);
 
     // Licht
     const light = new THREE.HemisphereLight(0xffffff,0x222222,2);
@@ -68,25 +67,6 @@ function startGame(){
 
 }
 
-function animate(){
-
-    requestAnimationFrame(animate);
-
-    renderer.render(scene,camera);
-
-}
-
-window.addEventListener("resize",()=>{
-
-    if(!camera) return;
-
-    camera.aspect = window.innerWidth/window.innerHeight;
-
-    camera.updateProjectionMatrix();
-
-    renderer.setSize(window.innerWidth,window.innerHeight);
-
-});
 function animate(){
 
     requestAnimationFrame(animate);
