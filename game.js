@@ -1,42 +1,4 @@
-// =========================
-// INFECTED - Game Engine v0.1
-// =========================
-
-const startButton = document.getElementById("startButton");
-const loading = document.getElementById("loading");
-
-let scene;
-let camera;
-let renderer;
-
-startButton.addEventListener("click", startGame);
-
-function startGame(){
-
-    loading.style.display = "none";
-
-    scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x050505);
-
-    camera = new THREE.PerspectiveCamera(
-        75,
-        window.innerWidth / window.innerHeight,
-        0.1,
-        1000
-    );
-
-    camera.position.set(0,2,5);
-
-    renderer = new THREE.WebGLRenderer({
-        antialias:true
-    });
-
-    renderer.setSize(window.innerWidth,window.innerHeight);
-
-    document.body.appendChild(renderer.domElement);
-    createWorld(scene);
-
-   // =========================
+ // =========================
 // INFECTED - Game Engine v0.1
 // =========================
 
