@@ -854,13 +854,9 @@ def get_current_analysis():
     global cached_analysis
     global cached_closed_candle_time
 
-    # Markierung der aktuell erwarteten letzten
-    # geschlossenen M15-Kerze.
     now = utc_now()
 
-    quarter = (
-        now.minute // 15
-    ) * 15
+    quarter = (now.minute // 15) * 15
 
     current_bucket = now.replace(
         minute=quarter,
@@ -868,38 +864,26 @@ def get_current_analysis():
         microsecond=0
     )
 
-  expected_closed_candle = (
-    current_bucket
-    - timedelta(minutes=15)
-)
-
-    expected_time = (
-        expected_closed_candle
+    expected_closed_candle = (
+        current_bucket - timedelta(minutes=15)
     )
 
-    # Wenn wir diese Kerze schon analysiert haben,
-    # benutzen wir den Cache.
+    expected_time = expected_closed_candle
+
     if (
         cached_analysis is not None
-        and cached_closed_candle_time
-        == expected_time
+        and cached_closed_candle_time == expected_time
     ):
         return cached_analysis
 
     candles = fetch_market_data()
 
-    analysis = analyze_market(
-        candles
-    )
+    analysis = analyze_market(candles)
 
     cached_analysis = analysis
-
-    cached_closed_candle_time = (
-        expected_time
-    )
+    cached_closed_candle_time = expected_time
 
     return analysis
-
 
 # =========================================================
 # API
